@@ -1,0 +1,118 @@
+{
+  "tasks": [
+    {
+      "id": "aea1324a-e9f3-433f-bac8-bb4552da54ef",
+      "name": "페이지 라우트 골격 생성",
+      "description": "북 리뷰 앱의 3개 페이지 라우트 파일을 생성/교체한다.\n1. app/page.tsx: 기존 랜딩 페이지를 리뷰 목록 페이지 골격으로 교체 (TODO 주석 포함)\n2. app/reviews/[slug]/page.tsx: 리뷰 상세 페이지 빈 껍데기 신규 생성\n3. app/login/page.tsx: 매직 링크 로그인 페이지 빈 껍데기 신규 생성\n\n수락 기준:\n- 3개 파일 모두 RSC (\"use client\" 없음)\n- npm run dev 실행 시 /, /reviews/test-slug, /login 라우트가 200 응답\n- app/layout.tsx의 Header/Footer가 모든 페이지에 정상 렌더링",
+      "notes": "Next.js 16 App Router에서 동적 라우트 params는 Promise 타입. await params 패턴 사용 필수. app/reviews/ 디렉토리와 app/reviews/[slug]/ 디렉토리 모두 신규 생성 필요.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-05-06T02:42:04.368Z",
+      "updatedAt": "2026-05-06T02:49:15.247Z",
+      "relatedFiles": [
+        {
+          "path": "app/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "기존 랜딩 페이지 → 리뷰 목록 골격으로 교체",
+          "lineStart": 1,
+          "lineEnd": 282
+        },
+        {
+          "path": "app/reviews/[slug]/page.tsx",
+          "type": "CREATE",
+          "description": "리뷰 상세 페이지 골격"
+        },
+        {
+          "path": "app/login/page.tsx",
+          "type": "CREATE",
+          "description": "매직 링크 로그인 페이지 골격"
+        },
+        {
+          "path": "app/layout.tsx",
+          "type": "REFERENCE",
+          "description": "변경 금지. Header/Footer/ThemeProvider 구조 확인용",
+          "lineStart": 1,
+          "lineEnd": 54
+        }
+      ],
+      "implementationGuide": "app/page.tsx 교체:\n- 기존 랜딩 페이지 내용 전체 제거\n- export default function ReviewsPage() 로 교체\n- 페이지 제목 영역(h1)과 TODO 주석(그리드, 필터, 검색 위치) 포함\n- Metadata export 추가 (title: 북 리뷰)\n\napp/reviews/[slug]/page.tsx 신규:\n- interface PageProps { params: Promise<{ slug: string }> } (Next.js 16 App Router: params는 Promise)\n- async function ReviewDetailPage({ params }: PageProps)\n- const { slug } = await params\n- TODO 주석으로 Notion 호출 위치 표시\n\napp/login/page.tsx 신규:\n- export default function LoginPage()\n- 이메일 입력 폼 UI는 추후 구현 (TODO 주석)\n- 기본 안내 텍스트만",
+      "verificationCriteria": "1. npm run dev 후 http://localhost:3000 접속 시 리뷰 목록 골격 페이지 렌더링\n2. http://localhost:3000/reviews/test 접속 시 상세 페이지 골격 렌더링\n3. http://localhost:3000/login 접속 시 로그인 페이지 골격 렌더링\n4. 3개 페이지 모두 Header/Footer 포함\n5. TypeScript 타입 오류 없음 (npm run lint 통과)",
+      "analysisResult": "Task 001 목표: 북 리뷰 웹 앱의 전체 라우트 골격을 생성한다. 실제 데이터 연동 없이 빈 껍데기 파일로 App Router 라우팅 구조를 확정하고, 이후 Phase 2(더미 데이터 UI)와 Phase 3(Notion 연동)의 기반을 만든다.\\n\\n공통 제약:\\n- Next.js 16.2.4 App Router 준수 (node_modules/next/dist/docs/01-app/ 참조)\\n- app/layout.tsx 절대 수정 금지\\n- RSC 기본, \\\"use client\\\"는 필요한 경우만\\n- 경로 별칭 @/* 사용 (상대경로 금지)\\n- 한국어 UI 텍스트 및 주석\\n- cn() 사용 시 import { cn } from \\\"@/lib/utils\\\"",
+      "summary": "3개 파일 모두 생성/교체 완료. app/page.tsx → ReviewsPage RSC로 교체, app/reviews/[slug]/page.tsx → Next.js 16 params: Promise 패턴 적용, app/login/page.tsx → LoginPage RSC 생성. 모든 파일 \"use client\" 없는 RSC, @/* 경로 별칭 사용, 한국어 UI, Metadata export 포함. npm run lint 오류 없음. app/layout.tsx 변경 없이 Header/Footer 상속 구조 유지.",
+      "completedAt": "2026-05-06T02:49:15.241Z"
+    },
+    {
+      "id": "a8e42c3c-09ee-49d4-ad27-b73b73794f5d",
+      "name": "API Route Handler 및 에러 바운더리 골격 생성",
+      "description": "API Route Handler와 특수 파일(not-found, error)을 생성한다.\n1. app/api/auth/verify/route.ts: 매직 링크 토큰 검증 Route Handler 골격\n2. app/not-found.tsx: 글로벌 404 페이지\n3. app/error.tsx: 글로벌 에러 바운더리\n\n수락 기준:\n- not-found.tsx: RSC, 한국어 안내 + 홈으로 링크\n- error.tsx: \"use client\" 선언, unstable_retry prop 사용 (Next.js 16 API)\n- /api/auth/verify GET 요청 시 200 응답",
+      "notes": "error.tsx에서 reset prop 사용 금지. Next.js 16.2.0부터 unstable_retry로 변경됨 (node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/error.md 확인). app/api/auth/verify/ 디렉토리 신규 생성 필요.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "aea1324a-e9f3-433f-bac8-bb4552da54ef"
+        }
+      ],
+      "createdAt": "2026-05-06T02:42:04.368Z",
+      "updatedAt": "2026-05-06T02:52:45.832Z",
+      "relatedFiles": [
+        {
+          "path": "app/api/auth/verify/route.ts",
+          "type": "CREATE",
+          "description": "매직 링크 토큰 검증 Route Handler 골격"
+        },
+        {
+          "path": "app/not-found.tsx",
+          "type": "CREATE",
+          "description": "글로벌 404 페이지"
+        },
+        {
+          "path": "app/error.tsx",
+          "type": "CREATE",
+          "description": "글로벌 에러 바운더리 (use client)"
+        },
+        {
+          "path": "components/ui/button.tsx",
+          "type": "DEPENDENCY",
+          "description": "Button 컴포넌트 재사용",
+          "lineStart": 1,
+          "lineEnd": 58
+        }
+      ],
+      "implementationGuide": "app/api/auth/verify/route.ts:\n- import { NextRequest, NextResponse } from \"next/server\"\n- export async function GET(request: NextRequest)\n- TODO 주석: 토큰 파라미터 추출, 검증, JWT 발급, cookie 설정\n- 현재는 NextResponse.json({ message: \"TODO\" }) 반환\n\napp/not-found.tsx:\n- RSC (\"use client\" 없음)\n- import Link from \"next/link\"\n- import { Button } from \"@/components/ui/button\"\n- 404 안내 텍스트 한국어\n- Button으로 홈으로 이동 링크\n\napp/error.tsx:\n- \"use client\" 최상단 (React Error Boundary는 클라이언트 컴포넌트 필수)\n- Props 타입: { error: Error & { digest?: string }, unstable_retry: () => void }\n- unstable_retry 버튼 제공 (Next.js 16.2.0 API, reset 아님)\n- import { Button } from \"@/components/ui/button\"",
+      "verificationCriteria": "1. http://localhost:3000/없는경로 접속 시 한국어 404 페이지 렌더링\n2. 404 페이지에 홈으로 버튼 존재\n3. GET /api/auth/verify 요청 시 200 응답 (TODO 상태)\n4. TypeScript 타입 오류 없음\n5. error.tsx에 unstable_retry prop 사용 확인",
+      "analysisResult": "Task 001 목표: 북 리뷰 웹 앱의 전체 라우트 골격을 생성한다. 실제 데이터 연동 없이 빈 껍데기 파일로 App Router 라우팅 구조를 확정하고, 이후 Phase 2(더미 데이터 UI)와 Phase 3(Notion 연동)의 기반을 만든다.\\n\\n공통 제약:\\n- Next.js 16.2.4 App Router 준수 (node_modules/next/dist/docs/01-app/ 참조)\\n- app/layout.tsx 절대 수정 금지\\n- RSC 기본, \\\"use client\\\"는 필요한 경우만\\n- 경로 별칭 @/* 사용 (상대경로 금지)\\n- 한국어 UI 텍스트 및 주석\\n- cn() 사용 시 import { cn } from \\\"@/lib/utils\\\"",
+      "summary": "3개 파일 모두 생성 완료. app/not-found.tsx → RSC, buttonVariants+Link로 asChild 없이 홈 버튼 구현. app/error.tsx → \"use client\" + unstable_retry prop (Next.js 16.2.0 API). app/api/auth/verify/route.ts → GET handler 골격, TODO 주석 포함. 린트 오류 0개(warning은 미구현 골격 파라미터로 정상).",
+      "completedAt": "2026-05-06T02:52:45.827Z"
+    },
+    {
+      "id": "6dada84d-f245-4dc9-930f-436e60623032",
+      "name": "Server Action 파일 골격 생성",
+      "description": "댓글 및 인증 Server Action 파일을 생성한다.\n1. app/actions/comments.ts: createComment, softDeleteComment 함수 시그니처\n2. app/actions/auth.ts: requestMagicLink 함수 시그니처\n\n수락 기준:\n- 두 파일 모두 파일 최상단에 \"use server\" 선언\n- 함수 시그니처와 TODO 주석만 포함 (실제 구현 없음)\n- TypeScript 타입 import 없이 인라인 타입으로 정의 (lib/notion/types.ts는 Phase 1 Task 002에서 생성 예정)",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "aea1324a-e9f3-433f-bac8-bb4552da54ef"
+        }
+      ],
+      "createdAt": "2026-05-06T02:42:04.368Z",
+      "updatedAt": "2026-05-06T02:52:48.761Z",
+      "relatedFiles": [
+        {
+          "path": "app/actions/comments.ts",
+          "type": "CREATE",
+          "description": "댓글 Server Action 골격 (createComment, softDeleteComment)"
+        },
+        {
+          "path": "app/actions/auth.ts",
+          "type": "CREATE",
+          "description": "인증 Server Action 골격 (requestMagicLink)"
+        }
+      ],
+      "implementationGuide": "app/actions/comments.ts:\n- \"use server\" 최상단\n- createComment(params: { reviewId: string; body: string }): Promise<{ success: boolean; error?: string }>\n- softDeleteComment(commentId: string): Promise<{ success: boolean; error?: string }>\n- 각 함수 내부는 TODO 주석만\n\napp/actions/auth.ts:\n- \"use server\" 최상단\n- requestMagicLink(email: string): Promise<{ success: boolean; error?: string }>\n- 함수 내부는 TODO 주석만 (ALLOWED_EMAILS 검증, Resend 발송)\n\n공통: app/actions/ 디렉토리 신규 생성 필요",
+      "verificationCriteria": "1. 두 파일 모두 최상단 \"use server\" 선언 확인\n2. 3개 함수 시그니처 존재 (createComment, softDeleteComment, requestMagicLink)\n3. TypeScript 타입 오류 없음 (npm run lint 통과)\n4. 실제 로직 없이 TODO 주석만 포함",
+      "analysisResult": "Task 001 목표: 북 리뷰 웹 앱의 전체 라우트 골격을 생성한다. 실제 데이터 연동 없이 빈 껍데기 파일로 App Router 라우팅 구조를 확정하고, 이후 Phase 2(더미 데이터 UI)와 Phase 3(Notion 연동)의 기반을 만든다.\\n\\n공통 제약:\\n- Next.js 16.2.4 App Router 준수 (node_modules/next/dist/docs/01-app/ 참조)\\n- app/layout.tsx 절대 수정 금지\\n- RSC 기본, \\\"use client\\\"는 필요한 경우만\\n- 경로 별칭 @/* 사용 (상대경로 금지)\\n- 한국어 UI 텍스트 및 주석\\n- cn() 사용 시 import { cn } from \\\"@/lib/utils\\\"",
+      "summary": "2개 파일 모두 생성 완료. 두 파일 모두 최상단 \"use server\" 선언. createComment, softDeleteComment, requestMagicLink 3개 함수 시그니처 정의. 인라인 타입 사용(외부 타입 파일 의존 없음). TODO 주석으로 Phase 3 구현 위치 명시. 린트 오류 0개.",
+      "completedAt": "2026-05-06T02:52:48.758Z"
+    }
+  ]
+}

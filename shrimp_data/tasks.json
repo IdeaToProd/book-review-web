@@ -1,0 +1,759 @@
+{
+  "tasks": [
+    {
+      "id": "c3598d03-6c4b-4bb4-b498-b804d9387a5d",
+      "name": "Task 002: 타입 정의 및 노션 데이터 모델 계약",
+      "description": "lib/notion/types.ts에 Review, Comment, ReviewStatus, NotionRichText 타입 정의. lib/notion/client.ts 빈 껍데기(env 검증). lib/notion/reviews.ts, lib/notion/comments.ts 함수 시그니처 정의. lib/auth/session.ts, lib/auth/magicLink.ts 함수 시그니처 정의. .env.example 작성.",
+      "notes": "함수 시그니처만 정의, throw new Error('TODO') 또는 return null 처리. 실제 구현은 Phase 3에서 수행.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-05-06T03:02:21.268Z",
+      "updatedAt": "2026-05-06T03:02:21.268Z",
+      "relatedFiles": [
+        {
+          "path": "lib/notion/types.ts",
+          "type": "CREATE",
+          "description": "Review/Comment/ReviewStatus 타입 정의"
+        },
+        {
+          "path": "lib/notion/client.ts",
+          "type": "CREATE",
+          "description": "Notion 클라이언트 env 검증 껍데기"
+        },
+        {
+          "path": "lib/notion/reviews.ts",
+          "type": "CREATE",
+          "description": "리뷰 조회 함수 시그니처"
+        },
+        {
+          "path": "lib/notion/comments.ts",
+          "type": "CREATE",
+          "description": "댓글 CRUD 함수 시그니처"
+        },
+        {
+          "path": "lib/auth/session.ts",
+          "type": "CREATE",
+          "description": "세션 조회 함수 시그니처"
+        },
+        {
+          "path": "lib/auth/magicLink.ts",
+          "type": "CREATE",
+          "description": "매직 링크 토큰 함수 시그니처"
+        },
+        {
+          "path": ".env.example",
+          "type": "CREATE",
+          "description": "환경 변수 예시 파일"
+        },
+        {
+          "path": "app/actions/comments.ts",
+          "type": "REFERENCE",
+          "description": "이미 생성된 Server Action 골격 참조"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "DEPENDENCY",
+          "description": "cn() 유틸리티"
+        }
+      ],
+      "implementationGuide": "1) lib/notion/types.ts: Review(id,title,author,slug,reviewer,reviewerEmail,rating,tags,cover,status,publishedAt,summary), Comment(id,reviewId,author,authorEmail,body,createdAt,deleted), ReviewStatus('Draft'|'Published'|'Archived'), NotionRichText\n2) lib/notion/client.ts: NOTION_TOKEN env 존재 검증 함수만, 실제 클라이언트 초기화 없음\n3) lib/notion/reviews.ts: getPublishedReviews({tag?,q?,page?}):Promise<{reviews:Review[],total:number}>, getReviewBySlug(slug):Promise<Review|null> 시그니처만\n4) lib/notion/comments.ts: getCommentsByReviewId(id):Promise<Comment[]>, createComment({reviewId,body,authorEmail}):Promise<Comment>, softDeleteComment(commentId):Promise<void> 시그니처만\n5) lib/auth/session.ts: getSession():Promise<{email:string}|null> 시그니처\n6) lib/auth/magicLink.ts: signMagicToken(email):Promise<string>, verifyMagicToken(token):Promise<string|null> 시그니처\n7) .env.example: NOTION_TOKEN, NOTION_REVIEWS_DB_ID, NOTION_COMMENTS_DB_ID, RESEND_API_KEY, JWT_SECRET, ALLOWED_EMAILS, APP_URL",
+      "verificationCriteria": "1) TypeScript 컴파일 오류 없음 2) 모든 시그니처 파일 생성 확인 3) .env.example에 7개 환경 변수 모두 포함 4) npm run lint 통과",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn 기반. 노션을 데이터 소스로 사용하는 북 리뷰 + 토론 플랫폼. Task 001(라우트 골격) 완료. cn()/@lib/utils 재사용, sonner/react-hook-form 이미 설치됨. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요."
+    },
+    {
+      "id": "251859c4-0a3a-45b4-a55d-b7b8487ba693",
+      "name": "Task 003: 노션 DB 스키마 문서화 및 검증 스크립트",
+      "description": "docs/notion-schema.md에 Reviews/Comments DB 속성 정의 문서화. scripts/notion-check.ts 작성(DB 연결 + 필수 속성 존재 검증, Phase 3에서 활성화).",
+      "notes": "실제 노션 워크스페이스 DB 생성 및 Integration 권한 공유는 개발자가 수동으로 진행해야 함. 스크립트는 검증용.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c3598d03-6c4b-4bb4-b498-b804d9387a5d"
+        }
+      ],
+      "createdAt": "2026-05-06T03:02:21.268Z",
+      "updatedAt": "2026-05-06T03:02:21.268Z",
+      "relatedFiles": [
+        {
+          "path": "docs/notion-schema.md",
+          "type": "CREATE",
+          "description": "노션 DB 스키마 문서"
+        },
+        {
+          "path": "scripts/notion-check.ts",
+          "type": "CREATE",
+          "description": "노션 DB 속성 검증 스크립트"
+        },
+        {
+          "path": "lib/notion/types.ts",
+          "type": "REFERENCE",
+          "description": "타입 참조"
+        }
+      ],
+      "implementationGuide": "1) docs/notion-schema.md: Reviews DB 속성표(Title/Author/Slug/Reviewer/ReviewerEmail/Rating/Tags/Cover/Status/PublishedAt/Summary/Body), Comments DB 속성표(ID/Review/Author/AuthorEmail/Body/CreatedAt/Deleted)\n2) scripts/notion-check.ts: NOTION_TOKEN, NOTION_REVIEWS_DB_ID, NOTION_COMMENTS_DB_ID env 로드 → @notionhq/client로 DB retrieve → 필수 속성 존재 여부 콘솔 출력. Phase 3 전까지는 주석 처리 가능",
+      "verificationCriteria": "1) docs/notion-schema.md에 Reviews/Comments DB 속성 모두 문서화 2) scripts/notion-check.ts TypeScript 컴파일 오류 없음",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn 기반. 노션을 데이터 소스로 사용하는 북 리뷰 + 토론 플랫폼. Task 001(라우트 골격) 완료. cn()/@lib/utils 재사용, sonner/react-hook-form 이미 설치됨. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요."
+    },
+    {
+      "id": "a20a14a7-8235-4c4c-9578-ee69a0c7815e",
+      "name": "Task 004: 더미 데이터 및 fixture 유틸리티",
+      "description": "lib/dummy/reviews.ts에 12개 이상 더미 리뷰 fixture. lib/dummy/comments.ts에 리뷰별 5~10개 더미 댓글 fixture. lib/dummy/index.ts에 노션 함수와 동일 시그니처의 mock provider.",
+      "notes": "Phase 3에서 실제 Notion 함수로 swap할 때 import 경로만 바꾸면 되도록 시그니처 완전 일치 필수.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c3598d03-6c4b-4bb4-b498-b804d9387a5d"
+        }
+      ],
+      "createdAt": "2026-05-06T03:02:21.268Z",
+      "updatedAt": "2026-05-06T03:02:21.268Z",
+      "relatedFiles": [
+        {
+          "path": "lib/dummy/reviews.ts",
+          "type": "CREATE",
+          "description": "더미 리뷰 fixture"
+        },
+        {
+          "path": "lib/dummy/comments.ts",
+          "type": "CREATE",
+          "description": "더미 댓글 fixture"
+        },
+        {
+          "path": "lib/dummy/index.ts",
+          "type": "CREATE",
+          "description": "mock provider"
+        },
+        {
+          "path": "lib/notion/types.ts",
+          "type": "DEPENDENCY",
+          "description": "Review/Comment 타입 참조"
+        }
+      ],
+      "implementationGuide": "1) lib/dummy/reviews.ts: Review[] 배열 12개+, 다양한 tags('SF','에세이','경영','소설'), rating(1~5), cover(unsplash URL 또는 null)\n2) lib/dummy/comments.ts: Record<string, Comment[]> 형태로 reviewId별 댓글 배열\n3) lib/dummy/index.ts: getPublishedReviews({tag?,q?,page?}), getReviewBySlug(slug), getCommentsByReviewId(id) — lib/notion/types.ts의 타입과 동일 시그니처. tag/q 필터 로직은 클라이언트 사이드 includes로 구현",
+      "verificationCriteria": "1) 12개 이상 더미 리뷰 생성 2) getPublishedReviews tag/q 필터 동작 3) TypeScript 컴파일 오류 없음",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn 기반. 노션을 데이터 소스로 사용하는 북 리뷰 + 토론 플랫폼. Task 001(라우트 골격) 완료. cn()/@lib/utils 재사용, sonner/react-hook-form 이미 설치됨. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요."
+    },
+    {
+      "id": "c3efa20b-3a66-4dfd-af1f-e163ed13cefa",
+      "name": "Task 005: 공통 컴포넌트 라이브러리 확장",
+      "description": "shadcn base-nova 스타일로 input, textarea, skeleton, alert 컴포넌트 추가. pagination 커스텀 구현. sonner Toaster를 app/layout.tsx에 추가. 다크모드 토글 검증.",
+      "notes": "asChild 절대 사용 금지. shadcn add 후 생성된 파일에서 asChild 있으면 render prop으로 교체. sonner는 이미 package.json에 설치됨.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c3598d03-6c4b-4bb4-b498-b804d9387a5d"
+        }
+      ],
+      "createdAt": "2026-05-06T03:02:21.268Z",
+      "updatedAt": "2026-05-06T03:02:21.268Z",
+      "relatedFiles": [
+        {
+          "path": "components/ui/input.tsx",
+          "type": "CREATE",
+          "description": "Input 컴포넌트"
+        },
+        {
+          "path": "components/ui/textarea.tsx",
+          "type": "CREATE",
+          "description": "Textarea 컴포넌트"
+        },
+        {
+          "path": "components/ui/skeleton.tsx",
+          "type": "CREATE",
+          "description": "Skeleton 컴포넌트"
+        },
+        {
+          "path": "components/ui/alert.tsx",
+          "type": "CREATE",
+          "description": "Alert 컴포넌트"
+        },
+        {
+          "path": "components/ui/pagination.tsx",
+          "type": "CREATE",
+          "description": "Pagination 커스텀 컴포넌트"
+        },
+        {
+          "path": "app/layout.tsx",
+          "type": "TO_MODIFY",
+          "description": "Toaster 추가"
+        },
+        {
+          "path": "components/ui/button.tsx",
+          "type": "REFERENCE",
+          "description": "@base-ui/react 패턴 참조"
+        },
+        {
+          "path": "package.json",
+          "type": "REFERENCE",
+          "description": "Radix 의존성 유입 검증"
+        }
+      ],
+      "implementationGuide": "1) shadcn add input textarea skeleton alert — 설치 후 package.json에서 Radix 의존성 유입 없는지 확인\n2) components/ui/pagination.tsx: 이전/다음/페이지번호 버튼, Button 컴포넌트 재사용, render prop 패턴\n3) app/layout.tsx: <Toaster /> 추가 (sonner, richColors 옵션)\n4) 다크모드: ThemeToggle 클릭 시 light/dark/system 전환 동작 확인",
+      "verificationCriteria": "1) 5개 컴포넌트 모두 생성 2) asChild 없음 확인 3) Radix 의존성 package.json 미유입 4) Toaster 레이아웃에 추가 확인 5) npm run lint 통과",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn 기반. 노션을 데이터 소스로 사용하는 북 리뷰 + 토론 플랫폼. Task 001(라우트 골격) 완료. cn()/@lib/utils 재사용, sonner/react-hook-form 이미 설치됨. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요."
+    },
+    {
+      "id": "3eb1cb7e-b03a-4ee3-8f59-ee7e4d1d2a22",
+      "name": "Task 006: 리뷰 목록 페이지 UI",
+      "description": "ReviewCard, ReviewGrid, TagFilter, SearchBox 컴포넌트 구현. app/page.tsx에 더미 데이터 연결 + 12개 페이지네이션. LCP 최적화.",
+      "notes": "TagFilter는 RSC 유지 가능(Link 사용). SearchBox만 useRouter 때문에 use client 필요. 페이지네이션은 Task 005에서 만든 Pagination 컴포넌트 사용.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "a20a14a7-8235-4c4c-9578-ee69a0c7815e"
+        },
+        {
+          "taskId": "c3efa20b-3a66-4dfd-af1f-e163ed13cefa"
+        }
+      ],
+      "createdAt": "2026-05-06T03:02:21.268Z",
+      "updatedAt": "2026-05-06T03:02:21.268Z",
+      "relatedFiles": [
+        {
+          "path": "components/review/ReviewCard.tsx",
+          "type": "CREATE",
+          "description": "리뷰 카드 컴포넌트"
+        },
+        {
+          "path": "components/review/ReviewGrid.tsx",
+          "type": "CREATE",
+          "description": "반응형 그리드"
+        },
+        {
+          "path": "components/review/TagFilter.tsx",
+          "type": "CREATE",
+          "description": "태그 필터 (RSC)"
+        },
+        {
+          "path": "components/review/SearchBox.tsx",
+          "type": "CREATE",
+          "description": "검색 박스 (클라이언트)"
+        },
+        {
+          "path": "app/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "더미 데이터 연결"
+        },
+        {
+          "path": "lib/dummy/index.ts",
+          "type": "DEPENDENCY",
+          "description": "더미 데이터 provider"
+        },
+        {
+          "path": "components/ui/card.tsx",
+          "type": "DEPENDENCY",
+          "description": "Card 재사용"
+        },
+        {
+          "path": "components/ui/badge.tsx",
+          "type": "DEPENDENCY",
+          "description": "Badge 재사용"
+        }
+      ],
+      "implementationGuide": "1) components/review/ReviewCard.tsx: Cover(next/image), Title, Author, Reviewer, Rating(별 아이콘), Tags(Badge), Summary 표시. Card 컴포넌트 재사용\n2) components/review/ReviewGrid.tsx: grid cols-1 sm:cols-2 lg:cols-3 xl:cols-4, ReviewCard 목록 렌더링\n3) components/review/TagFilter.tsx: RSC — searchParams의 tag 읽기, Link로 ?tag= 토글. Badge/Button 재사용\n4) components/review/SearchBox.tsx: 'use client' — input onChange debounce(300ms) → router.replace로 ?q= 업데이트. Input 컴포넌트 재사용\n5) app/page.tsx: searchParams({tag?,q?,page?}) 받아 getDummyReviews 호출 → ReviewGrid + TagFilter + SearchBox + Pagination 렌더링\n6) next/image: 첫 번째 카드 priority=true, 나머지 lazy",
+      "verificationCriteria": "1) 더미 리뷰 12개 그리드 표시 2) 모바일(1열)/sm(2열)/lg(3열)/xl(4열) 반응형 3) 태그 클릭 시 URL ?tag= 업데이트 4) 검색 입력 시 URL ?q= 업데이트 5) 페이지네이션 동작",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn 기반. 노션을 데이터 소스로 사용하는 북 리뷰 + 토론 플랫폼. Task 001(라우트 골격) 완료. cn()/@lib/utils 재사용, sonner/react-hook-form 이미 설치됨. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요."
+    },
+    {
+      "id": "9a41dcc7-64d1-423c-b3a3-a0bb597d06a4",
+      "name": "Task 007: 리뷰 상세 페이지 UI 및 노션 블록 렌더러",
+      "description": "ReviewBody 컴포넌트 구현. lib/notion/render/index.tsx에 heading_1/2/3, paragraph, bulleted_list_item, numbered_list_item, code, quote, image 블록 렌더러 구현. 코드 블록 신택스 하이라이팅. app/reviews/[slug]/page.tsx에 더미 데이터 연결.",
+      "notes": "더미 블록 JSON은 실제 Notion API 응답 구조를 미리 시뮬레이션. Phase 3에서 실제 응답으로 교체 시 렌더러 보정 최소화 목표.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "a20a14a7-8235-4c4c-9578-ee69a0c7815e"
+        },
+        {
+          "taskId": "c3efa20b-3a66-4dfd-af1f-e163ed13cefa"
+        }
+      ],
+      "createdAt": "2026-05-06T03:02:21.268Z",
+      "updatedAt": "2026-05-06T03:02:21.268Z",
+      "relatedFiles": [
+        {
+          "path": "components/review/ReviewBody.tsx",
+          "type": "CREATE",
+          "description": "리뷰 상세 컴포넌트"
+        },
+        {
+          "path": "lib/notion/render/index.tsx",
+          "type": "CREATE",
+          "description": "노션 블록 렌더러"
+        },
+        {
+          "path": "app/reviews/[slug]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "더미 데이터 연결"
+        },
+        {
+          "path": "lib/dummy/reviews.ts",
+          "type": "DEPENDENCY",
+          "description": "더미 리뷰 + 블록 데이터"
+        }
+      ],
+      "implementationGuide": "1) components/review/ReviewBody.tsx: 상단 헤더(Cover 이미지, Title, Author, Reviewer, Rating, Tags), 하단 본문(블록 렌더러 출력)\n2) lib/notion/render/index.tsx: NotionBlock 타입 정의(type, content, children). renderBlock(block) switch문으로 각 타입 처리\n   - heading_1/2/3: h1/h2/h3 태그, 적절한 폰트 크기\n   - paragraph: p 태그\n   - bulleted_list_item: ul>li\n   - numbered_list_item: ol>li\n   - code: pre>code, language 속성\n   - quote: blockquote\n   - image: next/image 또는 img\n3) 코드 하이라이팅: highlight.js 또는 prism-react-renderer (번들 크기 고려)\n4) app/reviews/[slug]/page.tsx: getDummyReviewBySlug(slug) → ReviewBody + 더미 블록 JSON 연결",
+      "verificationCriteria": "1) 상세 페이지 더미 데이터 렌더링 2) 7가지 블록 타입 모두 시각적 확인 3) 코드 블록 신택스 하이라이팅 동작 4) 없는 slug 접근 시 not-found 처리",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn 기반. 노션을 데이터 소스로 사용하는 북 리뷰 + 토론 플랫폼. Task 001(라우트 골격) 완료. cn()/@lib/utils 재사용, sonner/react-hook-form 이미 설치됨. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요."
+    },
+    {
+      "id": "34658cee-eedb-494b-9a53-5ec43ab5a104",
+      "name": "Task 008: 인증 및 댓글 UI",
+      "description": "app/login/page.tsx 이메일 입력 폼 구현. CommentList, CommentForm 컴포넌트 구현. 더미 세션(__dev_session 쿠키)으로 본인/타인 케이스 시각 검증.",
+      "notes": "CommentForm은 use client 필요(useState/useForm). CommentList는 세션을 서버에서 읽어 RSC 유지 가능. __dev_session 쿠키는 개발 전용이며 Phase 3에서 실제 getSession()으로 교체.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c3efa20b-3a66-4dfd-af1f-e163ed13cefa"
+        },
+        {
+          "taskId": "9a41dcc7-64d1-423c-b3a3-a0bb597d06a4"
+        }
+      ],
+      "createdAt": "2026-05-06T03:02:21.268Z",
+      "updatedAt": "2026-05-06T03:02:21.268Z",
+      "relatedFiles": [
+        {
+          "path": "app/login/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "이메일 입력 폼"
+        },
+        {
+          "path": "components/comment/CommentList.tsx",
+          "type": "CREATE",
+          "description": "댓글 목록"
+        },
+        {
+          "path": "components/comment/CommentForm.tsx",
+          "type": "CREATE",
+          "description": "댓글 작성 폼"
+        },
+        {
+          "path": "app/reviews/[slug]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "댓글 영역 추가"
+        },
+        {
+          "path": "app/actions/auth.ts",
+          "type": "REFERENCE",
+          "description": "requestMagicLink 시그니처 참조"
+        },
+        {
+          "path": "components/ui/textarea.tsx",
+          "type": "DEPENDENCY",
+          "description": "Textarea 재사용"
+        },
+        {
+          "path": "components/ui/input.tsx",
+          "type": "DEPENDENCY",
+          "description": "Input 재사용"
+        }
+      ],
+      "implementationGuide": "1) app/login/page.tsx: react-hook-form으로 이메일 입력. requestMagicLink 호출(현재 TODO 반환). 성공 시 '링크를 발송했습니다' 안내 메시지 표시. 에러 시 sonner toast\n2) components/comment/CommentList.tsx: RSC — Comment[] 받아 목록 렌더링. createdAt 오름차순. 세션 이메일 === authorEmail인 경우 삭제 버튼 노출(조건부)\n3) components/comment/CommentForm.tsx: 'use client' — Textarea(1000자 제한), 제출 Button. 미인증 시 '로그인 후 댓글 작성' 안내. react-hook-form 사용\n4) app/reviews/[slug]/page.tsx: 더미 댓글 + CommentList + CommentForm 추가\n5) 더미 세션: __dev_session 쿠키 값으로 본인(authorEmail 일치) / 타인 케이스 UI 분기 확인",
+      "verificationCriteria": "1) 로그인 폼 이메일 유효성 검사 2) 댓글 목록 시간순 표시 3) 본인 댓글 삭제 버튼 노출 4) 미인증 시 로그인 유도 5) 1000자 초과 입력 차단",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn 기반. 노션을 데이터 소스로 사용하는 북 리뷰 + 토론 플랫폼. Task 001(라우트 골격) 완료. cn()/@lib/utils 재사용, sonner/react-hook-form 이미 설치됨. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요."
+    },
+    {
+      "id": "7bea9c7f-385e-4e53-85dd-34662bc79074",
+      "name": "Task 009: 404/에러/로딩 상태 및 반응형 점검",
+      "description": "app/not-found.tsx, app/error.tsx, app/loading.tsx, app/reviews/[slug]/loading.tsx 디자인 정리. 모바일 우선 반응형 검증. 키보드 네비게이션 + ARIA 라벨 1차 점검.",
+      "notes": "error.tsx는 Next.js 요구에 따라 반드시 use client. Skeleton은 Task 005에서 만든 컴포넌트 사용.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "3eb1cb7e-b03a-4ee3-8f59-ee7e4d1d2a22"
+        },
+        {
+          "taskId": "34658cee-eedb-494b-9a53-5ec43ab5a104"
+        }
+      ],
+      "createdAt": "2026-05-06T03:02:21.268Z",
+      "updatedAt": "2026-05-06T03:02:21.268Z",
+      "relatedFiles": [
+        {
+          "path": "app/not-found.tsx",
+          "type": "TO_MODIFY",
+          "description": "404 페이지 디자인"
+        },
+        {
+          "path": "app/error.tsx",
+          "type": "TO_MODIFY",
+          "description": "에러 바운더리 디자인"
+        },
+        {
+          "path": "app/loading.tsx",
+          "type": "CREATE",
+          "description": "목록 로딩 스켈레톤"
+        },
+        {
+          "path": "app/reviews/[slug]/loading.tsx",
+          "type": "CREATE",
+          "description": "상세 로딩 스켈레톤"
+        },
+        {
+          "path": "components/ui/skeleton.tsx",
+          "type": "DEPENDENCY",
+          "description": "Skeleton 재사용"
+        },
+        {
+          "path": "components/ui/button.tsx",
+          "type": "DEPENDENCY",
+          "description": "Button 재사용"
+        }
+      ],
+      "implementationGuide": "1) app/not-found.tsx: '페이지를 찾을 수 없습니다' 안내 + 홈으로 돌아가기 Button\n2) app/error.tsx: 'use client' — 에러 안내 + reset() Button\n3) app/loading.tsx: ReviewGrid 영역에 Skeleton 카드 12개\n4) app/reviews/[slug]/loading.tsx: ReviewBody 영역에 Skeleton\n5) 반응형: 640/768/1024/1280 breakpoint별 레이아웃 확인\n6) ARIA: 모든 Button에 aria-label, 폼 필드에 aria-describedby, 이미지에 alt",
+      "verificationCriteria": "1) 4개 페이지 모두 디자인 완성 2) Skeleton 로딩 상태 표시 3) 모바일/태블릿/데스크톱 레이아웃 정상 4) 키보드 Tab 순서 논리적",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn 기반. 노션을 데이터 소스로 사용하는 북 리뷰 + 토론 플랫폼. Task 001(라우트 골격) 완료. cn()/@lib/utils 재사용, sonner/react-hook-form 이미 설치됨. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요."
+    },
+    {
+      "id": "8fdcc23a-bef9-4fb1-9762-0a517fec1f0f",
+      "name": "Task 010: 노션 클라이언트 + Reviews DB 연동",
+      "description": "@notionhq/client 설치. lib/notion/client.ts 구현. getPublishedReviews, getReviewBySlug 실제 구현. 블록 렌더러 실제 Notion 응답에 맞춰 보정. app/page.tsx/reviews/[slug]/page.tsx 더미→실제 swap. ISR revalidate=60 설정. Playwright MCP 테스트.",
+      "notes": "Notion API 호출은 서버 전용(RSC/Server Action). 클라이언트 컴포넌트에서 직접 import 금지. 이미지 URL 만료 대비 next/image remotePatterns에 notion.so 추가.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "7bea9c7f-385e-4e53-85dd-34662bc79074"
+        }
+      ],
+      "createdAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "relatedFiles": [
+        {
+          "path": "lib/notion/client.ts",
+          "type": "TO_MODIFY",
+          "description": "Notion 클라이언트 구현"
+        },
+        {
+          "path": "lib/notion/reviews.ts",
+          "type": "TO_MODIFY",
+          "description": "실제 Reviews DB 쿼리 구현"
+        },
+        {
+          "path": "lib/notion/render/index.tsx",
+          "type": "TO_MODIFY",
+          "description": "실제 Notion 블록 응답 대응"
+        },
+        {
+          "path": "app/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "더미→Notion 실제 호출 swap"
+        },
+        {
+          "path": "app/reviews/[slug]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "더미→Notion 실제 호출 swap"
+        },
+        {
+          "path": "next.config.ts",
+          "type": "TO_MODIFY",
+          "description": "notion.so 이미지 remotePatterns 추가"
+        }
+      ],
+      "implementationGuide": "1) npm install @notionhq/client\n2) lib/notion/client.ts: Client 싱글턴, NOTION_TOKEN env 검증\n3) getPublishedReviews: databases.query, filter(Status=Published), sorts(PublishedAt desc), pageSize=12, q/tag 클라이언트 필터\n4) getReviewBySlug: databases.query, filter(Slug=slug), blocks.children.list로 본문 블록 조회\n5) lib/notion/render/index.tsx: 실제 Notion Block 타입(RichText 배열 구조)에 맞게 렌더러 보정\n6) app/page.tsx: export const revalidate=60, import getPublishedReviews from lib/notion/reviews\n7) Playwright: 목록 로드, 상세 진입, ?tag=/?q= 쿼리, 없는 slug → 404",
+      "verificationCriteria": "1) Notion 실제 리뷰 목록 로드 2) 상세 페이지 블록 렌더링 3) 태그/검색 쿼리 동작 4) 없는 slug → 404 5) Playwright 테스트 통과",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+    },
+    {
+      "id": "e8b72720-a862-4ae5-b720-4cc718ee36dc",
+      "name": "Task 011: 매직 링크 인증 시스템",
+      "description": "jose, resend 설치. lib/auth/magicLink.ts HMAC 서명 토큰(만료 15분) 구현. app/actions/auth.ts requestMagicLink 구현. app/api/auth/verify/route.ts 토큰검증→JWT→cookie→리다이렉트. lib/auth/session.ts getSession() 구현. Playwright MCP 테스트.",
+      "notes": "미인증/비허용 이메일 동일 에러 메시지 필수(이메일 존재 추측 방지). verify 성공 후 __dev_session 쿠키 제거.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "8fdcc23a-bef9-4fb1-9762-0a517fec1f0f"
+        }
+      ],
+      "createdAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "relatedFiles": [
+        {
+          "path": "lib/auth/magicLink.ts",
+          "type": "TO_MODIFY",
+          "description": "HMAC 토큰 생성/검증"
+        },
+        {
+          "path": "lib/auth/session.ts",
+          "type": "TO_MODIFY",
+          "description": "JWT 세션 조회"
+        },
+        {
+          "path": "app/actions/auth.ts",
+          "type": "TO_MODIFY",
+          "description": "requestMagicLink 구현"
+        },
+        {
+          "path": "app/api/auth/verify/route.ts",
+          "type": "TO_MODIFY",
+          "description": "토큰 검증 → JWT 발급 → cookie"
+        }
+      ],
+      "implementationGuide": "1) npm install jose resend\n2) lib/auth/magicLink.ts: signMagicToken(email) — crypto.createHmac('sha256', JWT_SECRET)+exp 포함 base64url. verifyMagicToken(token) — 서명 검증 + 만료 확인\n3) app/actions/auth.ts: ALLOWED_EMAILS.split(',')로 화이트리스트, 포함 시 Resend로 APP_URL/api/auth/verify?token=... 발송. 허용/비허용 동일 응답\n4) app/api/auth/verify/route.ts: GET, token 파라미터 → verifyMagicToken → jose SignJWT(email, 14d) → cookies().set('session', jwt, {httpOnly,secure,sameSite:lax}) → redirect('/')\n5) lib/auth/session.ts: cookies().get('session') → jose jwtVerify → {email} 반환",
+      "verificationCriteria": "1) 허용 이메일 발송 성공 2) 비허용 이메일 동일 응답 3) 만료 토큰 거부 4) verify 후 session cookie 설정 5) Playwright 테스트 통과",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+    },
+    {
+      "id": "ed2741a2-cf6a-4c99-be79-970474657923",
+      "name": "Task 012: 댓글 조회 + 작성 Server Action",
+      "description": "lib/notion/comments.ts getCommentsByReviewId 구현. app/actions/comments.ts createComment 구현(세션검증+1000자검증+Notion insert+revalidateTag). CommentForm useOptimistic 낙관적 UI. 리뷰 상세 댓글 RSC 분리. Playwright MCP 테스트.",
+      "notes": "댓글 작성 시 서버에서 authorEmail=session.email 강제 세팅. 클라이언트 값 신뢰 금지.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "e8b72720-a862-4ae5-b720-4cc718ee36dc"
+        }
+      ],
+      "createdAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "relatedFiles": [
+        {
+          "path": "lib/notion/comments.ts",
+          "type": "TO_MODIFY",
+          "description": "댓글 조회 구현"
+        },
+        {
+          "path": "app/actions/comments.ts",
+          "type": "TO_MODIFY",
+          "description": "createComment 구현"
+        },
+        {
+          "path": "components/comment/CommentForm.tsx",
+          "type": "TO_MODIFY",
+          "description": "useOptimistic 낙관적 UI"
+        },
+        {
+          "path": "app/reviews/[slug]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "댓글 RSC 분리"
+        }
+      ],
+      "implementationGuide": "1) lib/notion/comments.ts: getCommentsByReviewId — databases.query, filter(Review=reviewId, Deleted=false), sorts(CreatedAt asc)\n2) app/actions/comments.ts createComment: getSession() → 미인증 차단 → body.trim()없거나 length>1000 차단 → pages.create(Comments DB) → revalidateTag('comments:'+reviewId)\n3) components/comment/CommentForm.tsx: useOptimistic로 낙관적 댓글 추가 → createComment 호출 → 실패 시 rollback + sonner toast error\n4) app/reviews/[slug]/page.tsx: CommentsSection을 별도 async RSC로 분리, unstable_cache 또는 fetch cache 태그 적용",
+      "verificationCriteria": "1) 댓글 작성 성공 2) 1000자 초과/빈 본문 거부 3) 미인증 차단 4) 낙관적 UI 즉시 표시 → 실제 반영 5) Playwright 테스트 통과",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+    },
+    {
+      "id": "0678e235-df31-4917-b648-3d6667886f29",
+      "name": "Task 013: 본인 댓글 삭제 + 태그 필터 + 검색 연결",
+      "description": "app/actions/comments.ts softDeleteComment 구현. CommentList 본인 댓글 삭제 버튼. TagFilter 노션 실제 태그 동기화. SearchBox ?q= 서버 사이드 연결. Playwright MCP 테스트.",
+      "notes": "타인 댓글 삭제 시도 시 서버에서 AuthorEmail 검증으로 차단. 클라이언트 UI 숨김만으로 보안 의존 금지.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "ed2741a2-cf6a-4c99-be79-970474657923"
+        }
+      ],
+      "createdAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "relatedFiles": [
+        {
+          "path": "app/actions/comments.ts",
+          "type": "TO_MODIFY",
+          "description": "softDeleteComment 구현"
+        },
+        {
+          "path": "components/comment/CommentList.tsx",
+          "type": "TO_MODIFY",
+          "description": "삭제 버튼 + 낙관적 제거"
+        },
+        {
+          "path": "components/review/TagFilter.tsx",
+          "type": "TO_MODIFY",
+          "description": "Notion 실제 태그 동기화"
+        },
+        {
+          "path": "components/review/SearchBox.tsx",
+          "type": "TO_MODIFY",
+          "description": "서버 사이드 검색 연결"
+        }
+      ],
+      "implementationGuide": "1) softDeleteComment: getSession() → 댓글 조회(AuthorEmail 검증) → pages.update(Deleted=true) → revalidateTag\n2) CommentList: softDeleteComment 호출 후 낙관적 제거 또는 revalidate\n3) TagFilter: getPublishedReviews 결과에서 모든 태그 추출 → RSC에서 prop으로 전달\n4) SearchBox: getPublishedReviews({ q }) 서버 사이드 includes(title/author/summary) 연결 확인\n5) 빈 결과 UI: ReviewGrid에 결과 없음 안내 컴포넌트",
+      "verificationCriteria": "1) 본인 댓글 삭제 성공 2) 타인 댓글 삭제 서버 차단 3) 태그 필터 결과 정확 4) 검색 결과 정확 5) 빈 결과 UI 표시 6) Playwright 테스트 통과",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+    },
+    {
+      "id": "ffa35864-8c35-4397-8b7e-978a25d884c0",
+      "name": "Task 014: SEO + 다크모드 + 에러 바운더리 마무리",
+      "description": "app/layout.tsx 기본 OG/description/favicon 메타 보완. app/reviews/[slug]/page.tsx generateMetadata 동적 OG. app/sitemap.ts, app/robots.ts 추가. 다크모드 회귀 테스트. error.tsx reset 동작 점검.",
+      "notes": "ThemeProvider attribute='class'/defaultTheme='system'/enableSystem/disableTransitionOnChange 변경 금지(하이드레이션 불일치 방지).",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "0678e235-df31-4917-b648-3d6667886f29"
+        }
+      ],
+      "createdAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "relatedFiles": [
+        {
+          "path": "app/layout.tsx",
+          "type": "TO_MODIFY",
+          "description": "기본 OG 메타 보완"
+        },
+        {
+          "path": "app/reviews/[slug]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "generateMetadata 동적 OG"
+        },
+        {
+          "path": "app/sitemap.ts",
+          "type": "CREATE",
+          "description": "사이트맵"
+        },
+        {
+          "path": "app/robots.ts",
+          "type": "CREATE",
+          "description": "robots.txt"
+        }
+      ],
+      "implementationGuide": "1) app/layout.tsx: metadata 업데이트 — title('북 리뷰 | 독서 모임'), description, openGraph(title/description/type), ThemeProvider 설정 변경 금지\n2) app/reviews/[slug]/page.tsx: generateMetadata — getReviewBySlug(slug) → openGraph(title/description/images[cover])\n3) app/sitemap.ts: getPublishedReviews() → SitemapItem[] 반환\n4) app/robots.ts: Allow: /, Disallow: /api/, Sitemap: APP_URL/sitemap.xml\n5) 다크모드: light/dark/system 전환 시 깜빡임 없음 확인",
+      "verificationCriteria": "1) OG 태그 소셜 공유 미리보기 확인 2) sitemap.xml 접근 가능 3) robots.txt 정상 4) 다크모드 전환 깜빡임 없음",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+    },
+    {
+      "id": "53aefea6-e7a1-4548-90c5-a7e4e9bb9d05",
+      "name": "Task 015: 핵심 기능 통합 E2E 테스트",
+      "description": "Playwright MCP로 전체 사용자 시나리오 실행. 비로그인→목록→상세→댓글폼 로그인유도. 매직링크→댓글작성/삭제. 태그필터+검색+페이지네이션. 다크/라이트 토글. 에러/엣지케이스.",
+      "notes": "각 시나리오는 독립적으로 실행 가능하도록 상태 초기화. Playwright MCP browser_navigate, browser_click, browser_fill_form, browser_snapshot 활용.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "ffa35864-8c35-4397-8b7e-978a25d884c0"
+        }
+      ],
+      "createdAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "relatedFiles": [
+        {
+          "path": "app/page.tsx",
+          "type": "REFERENCE",
+          "description": "목록 페이지"
+        },
+        {
+          "path": "app/reviews/[slug]/page.tsx",
+          "type": "REFERENCE",
+          "description": "상세 페이지"
+        },
+        {
+          "path": "app/login/page.tsx",
+          "type": "REFERENCE",
+          "description": "로그인 페이지"
+        },
+        {
+          "path": "components/comment/CommentForm.tsx",
+          "type": "REFERENCE",
+          "description": "댓글 폼"
+        }
+      ],
+      "implementationGuide": "1) 시나리오 A: 비로그인 방문 → 목록 → 상세 → 댓글폼 '로그인 필요' 확인\n2) 시나리오 B: 로그인 → 댓글 작성 → 낙관적 표시 → 실제 반영 → 본인 댓글 삭제\n3) 시나리오 C: 태그 필터 클릭 → URL 변경 → 결과 필터링 → 검색 → 페이지네이션\n4) 시나리오 D: 다크모드 토글 → 클래스 변경 확인\n5) 엣지 케이스: 없는 slug → 404, 1000자 초과 댓글 → 에러 메시지, 만료 세션 → 로그아웃",
+      "verificationCriteria": "1) 4개 시나리오 모두 Playwright 통과 2) 엣지 케이스 처리 확인 3) 콘솔 에러 없음",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+    },
+    {
+      "id": "30b58f7c-6a3d-4b81-b31d-15803afb6221",
+      "name": "Task 016: 성능 최적화 및 Lighthouse 90+ 달성",
+      "description": "리뷰 목록 LCP<2.5s, 상세 LCP<2.8s 검증. next/image sizes/priority 최적화. 폰트 preload. 불필요한 클라이언트 컴포넌트 RSC 전환. 번들 크기 측정 및 미사용 아이콘 정리.",
+      "notes": "lucide-react@^1.8.0 비표준 버전 — 사용 전 실제 export 확인 필수.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "53aefea6-e7a1-4548-90c5-a7e4e9bb9d05"
+        }
+      ],
+      "createdAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "relatedFiles": [
+        {
+          "path": "components/review/ReviewCard.tsx",
+          "type": "TO_MODIFY",
+          "description": "이미지 최적화"
+        },
+        {
+          "path": "app/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "ISR revalidate 확인"
+        },
+        {
+          "path": "next.config.ts",
+          "type": "TO_MODIFY",
+          "description": "번들 분석 설정(선택)"
+        }
+      ],
+      "implementationGuide": "1) ReviewCard: 첫 번째 이미지 priority=true, sizes 속성 반응형 지정\n2) 번들 분석: next build + @next/bundle-analyzer(선택)\n3) 미사용 lucide-react 아이콘 import 제거(트리셰이킹 확인)\n4) RSC 전환: TagFilter는 이미 RSC, 추가 최적화 가능한 컴포넌트 식별\n5) ISR revalidate=60 + revalidateTag 정확성 재확인",
+      "verificationCriteria": "1) Lighthouse Performance >= 90 2) LCP 목록 <2.5s, 상세 <2.8s 3) 번들에 미사용 아이콘 없음",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+    },
+    {
+      "id": "1d9c9534-db52-4d9a-9f43-45c4ead9c219",
+      "name": "Task 017: 접근성 (WCAG 2.1 AA) 점검",
+      "description": "색상 대비 검증. 포커스 링 확인. 스킵 링크 추가. 시맨틱 마크업 점검. 폼 라벨/에러 연결. 스크린 리더 흐름 확인. 키보드 only 시나리오.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "30b58f7c-6a3d-4b81-b31d-15803afb6221"
+        }
+      ],
+      "createdAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "relatedFiles": [
+        {
+          "path": "components/layout/header.tsx",
+          "type": "TO_MODIFY",
+          "description": "스킵 링크 추가"
+        },
+        {
+          "path": "components/comment/CommentForm.tsx",
+          "type": "TO_MODIFY",
+          "description": "폼 접근성"
+        },
+        {
+          "path": "app/login/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "로그인 폼 접근성"
+        },
+        {
+          "path": "components/review/ReviewCard.tsx",
+          "type": "TO_MODIFY",
+          "description": "이미지 alt"
+        }
+      ],
+      "implementationGuide": "1) 스킵 링크: Header에 '#main-content' 스킵 링크 추가\n2) 색상 대비: Tailwind 토큰 기반 텍스트/배경 대비비 4.5:1 이상 확인\n3) 폼 라벨: CommentForm, LoginForm — label htmlFor + aria-describedby 에러 연결\n4) 이미지: ReviewCard Cover — alt에 책 제목 포함\n5) 키보드: Tab → Enter로 모든 인터랙션 가능 확인\n6) 포커스 링: focus-visible 스타일 모든 인터랙티브 요소에 적용",
+      "verificationCriteria": "1) Lighthouse Accessibility >= 90 2) 키보드 only 모든 기능 접근 가능 3) 스킵 링크 동작 4) 폼 에러 aria 연결",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+    },
+    {
+      "id": "84e42055-22a3-4ef5-8535-9a844946604b",
+      "name": "Task 018: Vercel 배포 및 운영 셋업",
+      "description": "Vercel 프로젝트 연결 및 env 등록. 프로덕션 도메인 매직 링크 redirect 검증. 로그 + 에러 모니터링 확인. README에 운영 가이드 추가.",
+      "notes": "APP_URL은 반드시 프로덕션 도메인으로 설정 (로컬 localhost 금지). ALLOWED_EMAILS는 쉼표 구분 문자열.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "1d9c9534-db52-4d9a-9f43-45c4ead9c219"
+        }
+      ],
+      "createdAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "relatedFiles": [
+        {
+          "path": "README.md",
+          "type": "TO_MODIFY",
+          "description": "운영 가이드 추가"
+        },
+        {
+          "path": ".env.example",
+          "type": "REFERENCE",
+          "description": "env 변수 목록 참조"
+        },
+        {
+          "path": "next.config.ts",
+          "type": "REFERENCE",
+          "description": "Vercel 배포 설정 확인"
+        }
+      ],
+      "implementationGuide": "1) vercel 연결: vercel link 또는 대시보드에서 GitHub repo 연결\n2) env 등록: NOTION_TOKEN, NOTION_REVIEWS_DB_ID, NOTION_COMMENTS_DB_ID, RESEND_API_KEY, JWT_SECRET, ALLOWED_EMAILS, APP_URL(프로덕션 도메인)\n3) 프로덕션 배포 후 매직 링크 이메일 발송 → 실제 verify URL 동작 확인\n4) Vercel 함수 로그 + Web Vitals 대시보드 확인\n5) README.md: 프로젝트 개요, 로컬 셋업, env 설정, 노션 DB 생성 가이드",
+      "verificationCriteria": "1) 프로덕션 배포 성공 2) 매직 링크 실제 동작 3) Vercel 로그 에러 없음 4) README 운영 가이드 포함",
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+    }
+  ]
+}
