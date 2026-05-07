@@ -106,6 +106,12 @@ export function InfiniteReviewList({
             priority={i < 3}
           />
         ))}
+        {/* 스크린 리더용 로딩 상태 알림 */}
+        {isLoading && (
+          <div role="status" aria-live="polite" aria-label="리뷰 로딩 중" className="sr-only">
+            리뷰를 불러오는 중입니다.
+          </div>
+        )}
         {isLoading && <ReviewSkeleton />}
       </div>
 

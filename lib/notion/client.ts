@@ -4,22 +4,7 @@
  */
 
 import { Client } from "@notionhq/client";
+import { env } from "@/lib/env";
 
-/** 필수 Notion 환경 변수 검증 */
-export function validateNotionEnv(): void {
-  const required = [
-    "NOTION_TOKEN",
-    "NOTION_REVIEWS_DB_ID",
-    "NOTION_COMMENTS_DB_ID",
-  ] as const;
-
-  const missing = required.filter((key) => !process.env[key]);
-  if (missing.length > 0) {
-    throw new Error(
-      `Notion 환경 변수 누락: ${missing.join(", ")}\n.env.local 파일을 확인하세요.`
-    );
-  }
-}
-
-/** Notion API 클라이언트 싱글턴 인스턴스 */
-export const notion = new Client({ auth: process.env.NOTION_TOKEN });
+/** Notion API 클라이언트 싱글턴 인스턴스 — 모듈 로드 시 env 검증 자동 실행 */
+export const notion = new Client({ auth: env.NOTION_TOKEN });

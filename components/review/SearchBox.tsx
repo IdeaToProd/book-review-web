@@ -74,7 +74,7 @@ function SearchBoxInner({ initialValue, className }: { initialValue: string; cla
   }, [])
 
   return (
-    <div className={cn("relative focus-within:ring-2 focus-within:ring-ring rounded-full transition-shadow", className)}>
+    <div role="search" className={cn("relative focus-within:ring-2 focus-within:ring-ring rounded-full transition-shadow", className)}>
       {/* 검색 아이콘 */}
       <Search
         className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"

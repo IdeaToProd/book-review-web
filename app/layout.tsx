@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -52,6 +53,13 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        {/* 스킵 내비게이션 — 키보드 사용자가 반복 헤더를 건너뛰고 본문으로 이동 */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-background focus:text-foreground focus:rounded-md focus:shadow-md focus:ring-2 focus:ring-ring"
+        >
+          본문으로 바로가기
+        </a>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -59,10 +67,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1">{children}</main>
           <Footer />
           {/* 토스트 알림 (sonner) — richColors로 성공/오류 색상 구분 */}
           <Toaster richColors />
+          {/* Vercel Web Vitals 수집 */}
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
