@@ -43,3 +43,10 @@ next-env.d.ts
 # claude code (IDE 설정)
 .claude/
 .mcp.json
+
+# playwright MCP 테스트 로그 및 스냅샷
+.playwright-mcp/
+
+# 임시 스크린샷
+homepage-*.png
+*.screenshot.png
