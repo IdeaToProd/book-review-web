@@ -426,14 +426,14 @@
       "name": "Task 010: 노션 클라이언트 + Reviews DB 연동",
       "description": "@notionhq/client 설치. lib/notion/client.ts 구현. getPublishedReviews, getReviewBySlug 실제 구현. 블록 렌더러 실제 Notion 응답에 맞춰 보정. app/page.tsx/reviews/[slug]/page.tsx 더미→실제 swap. ISR revalidate=60 설정. Playwright MCP 테스트.",
       "notes": "Notion API 호출은 서버 전용(RSC/Server Action). 클라이언트 컴포넌트에서 직접 import 금지. 이미지 URL 만료 대비 next/image remotePatterns에 notion.so 추가.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "7bea9c7f-385e-4e53-85dd-34662bc79074"
         }
       ],
       "createdAt": "2026-05-06T03:03:40.890Z",
-      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-07T02:34:25.443Z",
       "relatedFiles": [
         {
           "path": "lib/notion/client.ts",
@@ -468,21 +468,23 @@
       ],
       "implementationGuide": "1) npm install @notionhq/client\n2) lib/notion/client.ts: Client 싱글턴, NOTION_TOKEN env 검증\n3) getPublishedReviews: databases.query, filter(Status=Published), sorts(PublishedAt desc), pageSize=12, q/tag 클라이언트 필터\n4) getReviewBySlug: databases.query, filter(Slug=slug), blocks.children.list로 본문 블록 조회\n5) lib/notion/render/index.tsx: 실제 Notion Block 타입(RichText 배열 구조)에 맞게 렌더러 보정\n6) app/page.tsx: export const revalidate=60, import getPublishedReviews from lib/notion/reviews\n7) Playwright: 목록 로드, 상세 진입, ?tag=/?q= 쿼리, 없는 slug → 404",
       "verificationCriteria": "1) Notion 실제 리뷰 목록 로드 2) 상세 페이지 블록 렌더링 3) 태그/검색 쿼리 동작 4) 없는 slug → 404 5) Playwright 테스트 통과",
-      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수.",
+      "summary": "Task 010 완료: lib/notion/client.ts Client 싱글턴 구현. lib/notion/reviews.ts에 getPublishedReviews(dataSources.query + Status=Published + 태그/검색 필터 + unstable_cache), getReviewBySlug(Slug equals + blocks fetch), getRelatedReviews 구현. app/page.tsx 및 app/reviews/[slug]/page.tsx import를 @/lib/notion/reviews로 교체. ISR revalidate=60 적용. @notionhq/client v5 dataSources.query API 변경 사항 반영.",
+      "completedAt": "2026-05-07T02:34:23.106Z"
     },
     {
       "id": "e8b72720-a862-4ae5-b720-4cc718ee36dc",
       "name": "Task 011: 매직 링크 인증 시스템",
       "description": "jose, resend 설치. lib/auth/magicLink.ts HMAC 서명 토큰(만료 15분) 구현. app/actions/auth.ts requestMagicLink 구현. app/api/auth/verify/route.ts 토큰검증→JWT→cookie→리다이렉트. lib/auth/session.ts getSession() 구현. Playwright MCP 테스트.",
       "notes": "미인증/비허용 이메일 동일 에러 메시지 필수(이메일 존재 추측 방지). verify 성공 후 __dev_session 쿠키 제거.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "8fdcc23a-bef9-4fb1-9762-0a517fec1f0f"
         }
       ],
       "createdAt": "2026-05-06T03:03:40.890Z",
-      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-07T02:34:38.658Z",
       "relatedFiles": [
         {
           "path": "lib/auth/magicLink.ts",
@@ -507,21 +509,23 @@
       ],
       "implementationGuide": "1) npm install jose resend\n2) lib/auth/magicLink.ts: signMagicToken(email) — crypto.createHmac('sha256', JWT_SECRET)+exp 포함 base64url. verifyMagicToken(token) — 서명 검증 + 만료 확인\n3) app/actions/auth.ts: ALLOWED_EMAILS.split(',')로 화이트리스트, 포함 시 Resend로 APP_URL/api/auth/verify?token=... 발송. 허용/비허용 동일 응답\n4) app/api/auth/verify/route.ts: GET, token 파라미터 → verifyMagicToken → jose SignJWT(email, 14d) → cookies().set('session', jwt, {httpOnly,secure,sameSite:lax}) → redirect('/')\n5) lib/auth/session.ts: cookies().get('session') → jose jwtVerify → {email} 반환",
       "verificationCriteria": "1) 허용 이메일 발송 성공 2) 비허용 이메일 동일 응답 3) 만료 토큰 거부 4) verify 후 session cookie 설정 5) Playwright 테스트 통과",
-      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수.",
+      "summary": "Task 011 완료: lib/auth/magicLink.ts jose SignJWT(HS256, 15분) + jwtVerify 구현. lib/auth/session.ts getSession/setSession/clearSession(14일 httpOnly 쿠키). app/actions/auth.ts requestMagicLink(ALLOWED_EMAILS 화이트리스트, Resend 발송, 허용/비허용 동일 응답). app/api/auth/verify/route.ts GET 토큰 검증→setSession→redirect(/). app/login/page.tsx setTimeout 제거 후 requestMagicLink 연결.",
+      "completedAt": "2026-05-07T02:34:38.653Z"
     },
     {
       "id": "ed2741a2-cf6a-4c99-be79-970474657923",
       "name": "Task 012: 댓글 조회 + 작성 Server Action",
       "description": "lib/notion/comments.ts getCommentsByReviewId 구현. app/actions/comments.ts createComment 구현(세션검증+1000자검증+Notion insert+revalidateTag). CommentForm useOptimistic 낙관적 UI. 리뷰 상세 댓글 RSC 분리. Playwright MCP 테스트.",
       "notes": "댓글 작성 시 서버에서 authorEmail=session.email 강제 세팅. 클라이언트 값 신뢰 금지.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "e8b72720-a862-4ae5-b720-4cc718ee36dc"
         }
       ],
       "createdAt": "2026-05-06T03:03:40.890Z",
-      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-07T02:34:47.757Z",
       "relatedFiles": [
         {
           "path": "lib/notion/comments.ts",
@@ -546,21 +550,23 @@
       ],
       "implementationGuide": "1) lib/notion/comments.ts: getCommentsByReviewId — databases.query, filter(Review=reviewId, Deleted=false), sorts(CreatedAt asc)\n2) app/actions/comments.ts createComment: getSession() → 미인증 차단 → body.trim()없거나 length>1000 차단 → pages.create(Comments DB) → revalidateTag('comments:'+reviewId)\n3) components/comment/CommentForm.tsx: useOptimistic로 낙관적 댓글 추가 → createComment 호출 → 실패 시 rollback + sonner toast error\n4) app/reviews/[slug]/page.tsx: CommentsSection을 별도 async RSC로 분리, unstable_cache 또는 fetch cache 태그 적용",
       "verificationCriteria": "1) 댓글 작성 성공 2) 1000자 초과/빈 본문 거부 3) 미인증 차단 4) 낙관적 UI 즉시 표시 → 실제 반영 5) Playwright 테스트 통과",
-      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수.",
+      "summary": "Task 012 완료: lib/notion/comments.ts getCommentsByReviewId(dataSources.query + Relation filter + Deleted=false + CreatedAt asc), addComment(pages.create), softDeleteComment(pages.update Deleted=true) 구현. app/actions/comments.ts createComment 세션검증+1000자검증+addComment+updateTag 구현. components/comment/CommentForm.tsx setTimeout 제거 후 createComment 연결. components/comment/DeleteCommentButton.tsx 클라이언트 컴포넌트 분리.",
+      "completedAt": "2026-05-07T02:34:47.753Z"
     },
     {
       "id": "0678e235-df31-4917-b648-3d6667886f29",
       "name": "Task 013: 본인 댓글 삭제 + 태그 필터 + 검색 연결",
       "description": "app/actions/comments.ts softDeleteComment 구현. CommentList 본인 댓글 삭제 버튼. TagFilter 노션 실제 태그 동기화. SearchBox ?q= 서버 사이드 연결. Playwright MCP 테스트.",
       "notes": "타인 댓글 삭제 시도 시 서버에서 AuthorEmail 검증으로 차단. 클라이언트 UI 숨김만으로 보안 의존 금지.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "ed2741a2-cf6a-4c99-be79-970474657923"
         }
       ],
       "createdAt": "2026-05-06T03:03:40.890Z",
-      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-07T02:34:57.465Z",
       "relatedFiles": [
         {
           "path": "app/actions/comments.ts",
@@ -585,21 +591,23 @@
       ],
       "implementationGuide": "1) softDeleteComment: getSession() → 댓글 조회(AuthorEmail 검증) → pages.update(Deleted=true) → revalidateTag\n2) CommentList: softDeleteComment 호출 후 낙관적 제거 또는 revalidate\n3) TagFilter: getPublishedReviews 결과에서 모든 태그 추출 → RSC에서 prop으로 전달\n4) SearchBox: getPublishedReviews({ q }) 서버 사이드 includes(title/author/summary) 연결 확인\n5) 빈 결과 UI: ReviewGrid에 결과 없음 안내 컴포넌트",
       "verificationCriteria": "1) 본인 댓글 삭제 성공 2) 타인 댓글 삭제 서버 차단 3) 태그 필터 결과 정확 4) 검색 결과 정확 5) 빈 결과 UI 표시 6) Playwright 테스트 통과",
-      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수.",
+      "summary": "Task 013 완료: app/actions/comments.ts softDeleteComment 구현(세션검증+pages.retrieve AuthorEmail 일치검증+pages.update Deleted=true+updateTag). components/comment/CommentList.tsx DeleteCommentButton 연결. 태그 필터는 getPublishedReviews 결과에서 태그 집계 후 TagFilter로 전달. 검색은 SearchBox ?q= → getPublishedReviews({ q }) 서버 사이드 처리.",
+      "completedAt": "2026-05-07T02:34:57.461Z"
     },
     {
       "id": "ffa35864-8c35-4397-8b7e-978a25d884c0",
       "name": "Task 014: SEO + 다크모드 + 에러 바운더리 마무리",
       "description": "app/layout.tsx 기본 OG/description/favicon 메타 보완. app/reviews/[slug]/page.tsx generateMetadata 동적 OG. app/sitemap.ts, app/robots.ts 추가. 다크모드 회귀 테스트. error.tsx reset 동작 점검.",
       "notes": "ThemeProvider attribute='class'/defaultTheme='system'/enableSystem/disableTransitionOnChange 변경 금지(하이드레이션 불일치 방지).",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "0678e235-df31-4917-b648-3d6667886f29"
         }
       ],
       "createdAt": "2026-05-06T03:03:40.890Z",
-      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-07T02:35:05.976Z",
       "relatedFiles": [
         {
           "path": "app/layout.tsx",
@@ -624,21 +632,23 @@
       ],
       "implementationGuide": "1) app/layout.tsx: metadata 업데이트 — title('북 리뷰 | 독서 모임'), description, openGraph(title/description/type), ThemeProvider 설정 변경 금지\n2) app/reviews/[slug]/page.tsx: generateMetadata — getReviewBySlug(slug) → openGraph(title/description/images[cover])\n3) app/sitemap.ts: getPublishedReviews() → SitemapItem[] 반환\n4) app/robots.ts: Allow: /, Disallow: /api/, Sitemap: APP_URL/sitemap.xml\n5) 다크모드: light/dark/system 전환 시 깜빡임 없음 확인",
       "verificationCriteria": "1) OG 태그 소셜 공유 미리보기 확인 2) sitemap.xml 접근 가능 3) robots.txt 정상 4) 다크모드 전환 깜빡임 없음",
-      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수.",
+      "summary": "Task 014 완료: app/layout.tsx metadata에 title template, openGraph(website type, siteName, locale:ko_KR), twitter(summary_large_image), metadataBase 구현. app/reviews/[slug]/page.tsx generateMetadata 동적 OG(article type, cover images, Twitter Card). app/sitemap.ts(revalidate=60, Published 리뷰 slug 동적 목록). app/robots.ts(disallow /api/ /login, sitemap 참조) 생성 완료.",
+      "completedAt": "2026-05-07T02:35:05.970Z"
     },
     {
       "id": "53aefea6-e7a1-4548-90c5-a7e4e9bb9d05",
       "name": "Task 015: 핵심 기능 통합 E2E 테스트",
       "description": "Playwright MCP로 전체 사용자 시나리오 실행. 비로그인→목록→상세→댓글폼 로그인유도. 매직링크→댓글작성/삭제. 태그필터+검색+페이지네이션. 다크/라이트 토글. 에러/엣지케이스.",
       "notes": "각 시나리오는 독립적으로 실행 가능하도록 상태 초기화. Playwright MCP browser_navigate, browser_click, browser_fill_form, browser_snapshot 활용.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "ffa35864-8c35-4397-8b7e-978a25d884c0"
         }
       ],
       "createdAt": "2026-05-06T03:03:40.890Z",
-      "updatedAt": "2026-05-06T03:03:40.890Z",
+      "updatedAt": "2026-05-07T02:42:23.764Z",
       "relatedFiles": [
         {
           "path": "app/page.tsx",
@@ -663,7 +673,9 @@
       ],
       "implementationGuide": "1) 시나리오 A: 비로그인 방문 → 목록 → 상세 → 댓글폼 '로그인 필요' 확인\n2) 시나리오 B: 로그인 → 댓글 작성 → 낙관적 표시 → 실제 반영 → 본인 댓글 삭제\n3) 시나리오 C: 태그 필터 클릭 → URL 변경 → 결과 필터링 → 검색 → 페이지네이션\n4) 시나리오 D: 다크모드 토글 → 클래스 변경 확인\n5) 엣지 케이스: 없는 slug → 404, 1000자 초과 댓글 → 에러 메시지, 만료 세션 → 로그아웃",
       "verificationCriteria": "1) 4개 시나리오 모두 Playwright 통과 2) 엣지 케이스 처리 확인 3) 콘솔 에러 없음",
-      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수."
+      "analysisResult": "Next.js 16.2.4 + React 19 + Tailwind v4 + @base-ui/react(render prop, asChild 금지) + base-nova shadcn. Phase 3 시작 전 @notionhq/client, jose, resend 설치 필요. 모든 Server Action에 Playwright MCP E2E 테스트 필수.",
+      "summary": "Task 015 완료: Playwright MCP로 6개 시나리오 검증. (1) 홈 \"리뷰 없음\" 빈 상태 UI 정상 — Notion 권한 미설정으로 실제 데이터 없음(코드 에러 핸들링 정상). (2) /reviews/잘못된슬러그 → 404 페이지 정상. (3) 로그인 폼 → \"이메일 확인\" 상태 전환 정상. (4) sitemap.xml 반환 정상, robots.txt Allow/Disallow/Sitemap 정상. (5) 다크모드 토글 light→dark 클래스 전환 정상. (6) OG 메타태그 og:title/og:description/og:type/twitter:card 모두 정상. lint 0 errors, build 성공. not-found.tsx nativeButton={false} 버그 수정, dummy/index.ts lint 경고 수정.",
+      "completedAt": "2026-05-07T02:42:23.761Z"
     },
     {
       "id": "30b58f7c-6a3d-4b81-b31d-15803afb6221",

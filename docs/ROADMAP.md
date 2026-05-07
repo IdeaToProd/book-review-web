@@ -60,12 +60,12 @@
 
 더미 데이터를 실제 노션 API로 교체하고 인증·댓글 비즈니스 로직을 구현한다. 모든 Server Action에 Playwright MCP E2E 테스트 필수.
 
-- Task 010: 노션 클라이언트 + Reviews DB 연동
-- Task 011: 매직 링크 인증 시스템
-- Task 012: 댓글 조회 + 작성 (Server Action)
-- Task 013: 본인 댓글 삭제 + 태그 필터 + 검색
-- Task 014: SEO + 다크모드 + 에러 바운더리 마무리
-- Task 015: 핵심 기능 통합 E2E 테스트
+- ✅ Task 010: 노션 클라이언트 + Reviews DB 연동
+- ✅ Task 011: 매직 링크 인증 시스템
+- ✅ Task 012: 댓글 조회 + 작성 (Server Action)
+- ✅ Task 013: 본인 댓글 삭제 + 태그 필터 + 검색
+- ✅ Task 014: SEO + 다크모드 + 에러 바운더리 마무리
+- ✅ Task 015: 핵심 기능 통합 E2E 테스트
 
 ### Phase 4: 성능 최적화 및 배포
 
