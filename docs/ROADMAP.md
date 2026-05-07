@@ -10,7 +10,7 @@
 - 초대제 인증 + 댓글 시스템
 - 검색/필터/SEO/다크모드
 
-**전체 일정**: 2~3주 | **현재 상태**: Phase 2 완료 (UI/UX 완성)
+**전체 일정**: 2~3주 | **현재 상태**: Phase 4 완료 (전체 완료)
 
 ---
 
@@ -56,7 +56,7 @@
 - ✅ Task 008: 인증 및 댓글 UI
 - ✅ Task 009: 404/에러/로딩 상태 및 반응형 점검
 
-### Phase 3: 핵심 기능 구현 (P0/P1)
+### Phase 3: 핵심 기능 구현 (P0/P1) ✅
 
 더미 데이터를 실제 노션 API로 교체하고 인증·댓글 비즈니스 로직을 구현한다. 모든 Server Action에 Playwright MCP E2E 테스트 필수.
 
@@ -67,11 +67,14 @@
 - ✅ Task 014: SEO + 다크모드 + 에러 바운더리 마무리
 - ✅ Task 015: 핵심 기능 통합 E2E 테스트
 
-### Phase 4: 성능 최적화 및 배포
+### Phase 4: 성능 최적화 및 배포 ✅
 
-- Task 016: 성능 최적화 및 Lighthouse 90+ 달성
-- Task 017: 접근성 (WCAG 2.1 AA) 점검
-- Task 018: Vercel 배포 및 운영 셋업
+- ✅ Task 016: 성능 최적화 및 Lighthouse 90+ 달성
+  - See: tasks/016-성능최적화-lighthouse90.md
+- ✅ Task 017: 접근성 (WCAG 2.1 AA) 점검
+  - See: tasks/017-접근성-wcag21aa.md
+- ✅ Task 018: Vercel 배포 및 운영 셋업
+  - See: tasks/018-vercel-배포-운영셋업.md
 
 ### Phase 5 (v0.2 이후 백로그)
 
