@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { requestMagicLink } from "@/app/actions/auth"
 
 interface LoginFormValues {
   email: string
@@ -33,9 +34,12 @@ export default function LoginPage() {
   /** 매직 링크 요청 핸들러 */
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      // TODO: Phase 3 — requestMagicLink(data.email) Server Action 호출
-      // 개발 중 더미 성공 처리 (성공/실패 모두 동일 응답으로 이메일 존재 여부 숨김)
-      await new Promise((resolve) => setTimeout(resolve, 800))
+      // requestMagicLink Server Action 호출 (허용/비허용 모두 동일 응답)
+      const result = await requestMagicLink(data.email)
+      if (!result.success && result.error) {
+        toast.error(result.error)
+        return
+      }
       setSentEmail(data.email)
       setIsSent(true)
     } catch {

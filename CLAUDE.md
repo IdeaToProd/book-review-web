@@ -29,13 +29,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 개발 명령어
 
 ```bash
+# 개발
 npm run dev      # 개발 서버 실행
 npm run build    # 프로덕션 빌드
 npm run start    # 빌드된 앱 실행
 npm run lint     # ESLint 검사 (flat config, next@16 기준)
+npm run check-all   # 모든 검사 통합 실행 (권장)
+
+# UI 컴포넌트
+npx shadcn@latest add button    # 새 컴포넌트 추가
 ```
 
-> 테스트 프레임워크는 설치되어 있지 않습니다(`npm run test` 없음).
+## ✅ 작업 완료 체크리스트
+
+```bash
+npm run check-all   # 모든 검사 통과 확인
+npm run build       # 빌드 성공 확인
+```
 
 ---
 

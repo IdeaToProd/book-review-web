@@ -74,21 +74,21 @@ function SearchBoxInner({ initialValue, className }: { initialValue: string; cla
   }, [])
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative focus-within:ring-2 focus-within:ring-ring rounded-full transition-shadow", className)}>
       {/* 검색 아이콘 */}
       <Search
-        className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+        className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
         aria-hidden
       />
 
-      {/* 검색 입력창 */}
+      {/* 검색 입력창 — 알약형 */}
       <Input
         type="search"
         placeholder="제목, 저자, 내용으로 검색..."
         value={value}
         onChange={handleChange}
         aria-label="리뷰 검색"
-        className="pl-8 pr-8"
+        className="h-12 rounded-full border-border bg-background pl-12 pr-10 focus-visible:ring-0 focus-visible:ring-offset-0"
       />
 
       {/* 초기화 버튼 — 입력값이 있을 때만 표시 */}
@@ -98,7 +98,7 @@ function SearchBoxInner({ initialValue, className }: { initialValue: string; cla
           size="icon-xs"
           onClick={handleClear}
           aria-label="검색어 지우기"
-          className="absolute right-1 top-1/2 -translate-y-1/2"
+          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full"
         >
           <X />
         </Button>

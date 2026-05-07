@@ -1,7 +1,9 @@
 /**
- * Notion 클라이언트 — Phase 3에서 @notionhq/client 설치 후 실제 초기화 구현
- * 현재는 필수 env 변수 존재 여부만 검증
+ * Notion 클라이언트 싱글턴
+ * 서버 전용 모듈 — 클라이언트 번들에 포함되지 않도록 주의
  */
+
+import { Client } from "@notionhq/client";
 
 /** 필수 Notion 환경 변수 검증 */
 export function validateNotionEnv(): void {
@@ -19,6 +21,5 @@ export function validateNotionEnv(): void {
   }
 }
 
-// TODO: Phase 3 — @notionhq/client 설치 후 아래 코드 활성화
-// import { Client } from "@notionhq/client";
-// export const notion = new Client({ auth: process.env.NOTION_TOKEN });
+/** Notion API 클라이언트 싱글턴 인스턴스 */
+export const notion = new Client({ auth: process.env.NOTION_TOKEN });

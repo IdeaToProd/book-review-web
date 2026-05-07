@@ -2,7 +2,6 @@ import Image from "next/image"
 import { Star, User, BookOpen } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { NotionBlockRenderer } from "@/lib/notion/render"
 import type { Review } from "@/lib/notion/types"
@@ -65,7 +64,7 @@ export function ReviewBody({ review, className }: ReviewBodyProps) {
   })
 
   return (
-    <article className={cn("mx-auto max-w-3xl", className)}>
+    <article className={cn(className)}>
       {/* 상단 메타 영역 */}
       <header className="mb-10">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
@@ -93,9 +92,12 @@ export function ReviewBody({ review, className }: ReviewBodyProps) {
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {tags.map((tag) => (
-                  <Badge key={tag} variant="secondary">
+                  <span
+                    key={tag}
+                    className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-sm font-medium text-primary"
+                  >
                     {tag}
-                  </Badge>
+                  </span>
                 ))}
               </div>
             )}

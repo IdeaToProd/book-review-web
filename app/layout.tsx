@@ -17,10 +17,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.APP_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "Next.js Starter Kit",
-  description:
-    "Next.js 16, TypeScript, Tailwind CSS v4, shadcn/ui로 구성된 스타터 키트",
+  title: {
+    default: "북 리뷰 아카이브",
+    template: "%s | 북 리뷰 아카이브",
+  },
+  description: "독서 모임 멤버들이 함께 만드는 북 리뷰 아카이브. 노션으로 쓰고 웹으로 나눕니다.",
+  metadataBase: new URL(siteUrl),
+  openGraph: {
+    type: "website",
+    siteName: "북 리뷰 아카이브",
+    locale: "ko_KR",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 /**

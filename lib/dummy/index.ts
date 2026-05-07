@@ -95,8 +95,36 @@ export async function createComment(params: CreateCommentParams): Promise<Commen
 /**
  * 댓글 soft delete (더미 — 실제 삭제 없이 성공만 반환)
  */
-export async function softDeleteComment(_commentId: string): Promise<void> {
+export async function softDeleteComment(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _commentId: string
+): Promise<void> {
   // 더미에서는 실제 삭제 없이 성공
+}
+
+/**
+ * 현재 리뷰와 태그가 겹치는 관련 리뷰 반환
+ * 태그 교집합 수 내림차순, 동점 시 최신순
+ */
+export async function getRelatedReviews(
+  currentSlug: string,
+  tags: string[],
+  limit = 4
+): Promise<Review[]> {
+  const scored = DUMMY_REVIEWS.filter(
+    (r) => r.status === "Published" && r.slug !== currentSlug
+  )
+    .map((r) => ({
+      review: r,
+      score: r.tags.filter((t) => tags.includes(t)).length,
+    }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return new Date(b.review.publishedAt).getTime() - new Date(a.review.publishedAt).getTime();
+    });
+
+  return scored.slice(0, limit).map(({ review }) => review);
 }
 
 /** 리뷰 상세용 더미 노션 블록 */

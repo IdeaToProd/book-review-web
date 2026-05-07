@@ -33,8 +33,8 @@ export function ReviewGrid({ reviews, className }: ReviewGridProps) {
         <ReviewCard
           key={review.id}
           review={review}
-          // 첫 번째 카드만 priority 이미지 로드
-          priority={index === 0}
+          // 첫 3개 카드는 priority 이미지 로드 (뷰포트 크기에 따라 LCP 대상이 달라질 수 있음)
+          priority={index < 3}
         />
       ))}
     </div>

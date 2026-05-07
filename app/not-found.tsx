@@ -38,7 +38,7 @@ export default function NotFound() {
 
       {/* 버튼 그룹 */}
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
-        <Button render={<Link href="/" />} className="gap-2">
+        <Button render={<Link href="/" />} nativeButton={false} className="gap-2">
           <Home className="size-4" aria-hidden />
           홈으로 돌아가기
         </Button>

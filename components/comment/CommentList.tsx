@@ -1,9 +1,9 @@
-import { Trash2, MessageCircle } from "lucide-react"
+import { MessageCircle } from "lucide-react"
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn, getAvatarTone } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import type { Comment } from "@/lib/notion/types"
+import { DeleteCommentButton } from "./DeleteCommentButton"
 
 interface CommentListProps {
   comments: Comment[]
@@ -80,7 +80,7 @@ export function CommentList({
           <li key={comment.id} className="flex gap-3">
             {/* 아바타 */}
             <Avatar className="size-8 shrink-0">
-              <AvatarFallback className="bg-primary/10 text-xs font-medium text-primary">
+              <AvatarFallback className={cn("text-xs font-medium", getAvatarTone(comment.authorEmail))}>
                 {getInitials(comment.author)}
               </AvatarFallback>
             </Avatar>
@@ -104,15 +104,7 @@ export function CommentList({
 
                 {/* 본인 댓글에만 삭제 버튼 표시 */}
                 {isOwner && (
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    className="text-muted-foreground hover:text-destructive"
-                    aria-label="댓글 삭제"
-                    // TODO: Task 013 — softDeleteComment(comment.id) Server Action 연결
-                  >
-                    <Trash2 />
-                  </Button>
+                  <DeleteCommentButton commentId={comment.id} />
                 )}
               </div>
 

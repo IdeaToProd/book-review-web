@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { createComment } from "@/app/actions/comments"
 
 const MAX_LENGTH = 1000
 
@@ -31,7 +32,7 @@ interface CommentFormProps {
  * Phase 3에서 createComment() Server Action 연결
  */
 export function CommentForm({
-  reviewId: _reviewId,
+  reviewId,
   isLoggedIn,
   className,
 }: CommentFormProps) {
@@ -51,12 +52,15 @@ export function CommentForm({
   const charCount = bodyValue.length
 
   /** 댓글 제출 핸들러 */
-  const onSubmit = async (_data: CommentFormValues) => {
+  const onSubmit = async (data: CommentFormValues) => {
     setIsSubmitting(true)
     try {
-      // TODO: Phase 3 — createComment({ reviewId, body, authorEmail }) Server Action 호출
-      // 개발 중 더미 성공 처리
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      // createComment Server Action 호출
+      const result = await createComment({ reviewId, body: data.body })
+      if (!result.success) {
+        toast.error(result.error ?? "댓글 등록에 실패했습니다.")
+        return
+      }
       toast.success("댓글이 등록되었습니다.")
       reset()
     } catch {
@@ -73,7 +77,7 @@ export function CommentForm({
         <LogIn className="size-4" aria-hidden />
         <AlertDescription className="flex items-center gap-2">
           <span>댓글을 작성하려면 로그인이 필요합니다.</span>
-          <Button variant="link" size="sm" className="h-auto p-0" render={<Link href="/login" />}>
+          <Button variant="link" size="sm" className="h-auto p-0" nativeButton={false} render={<Link href="/login" />}>
             로그인하기
           </Button>
         </AlertDescription>

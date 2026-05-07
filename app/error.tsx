@@ -65,7 +65,8 @@ export default function GlobalError({
           다시 시도
         </Button>
 
-        <Button variant="outline" render={<Link href="/" />} className="gap-2">
+        {/* nativeButton={false}: render prop에 <a>(Link)가 들어오므로 button 시맨틱 비활성화 */}
+        <Button variant="outline" nativeButton={false} render={<Link href="/" />} className="gap-2">
           <Home className="size-4" aria-hidden />
           홈으로 돌아가기
         </Button>
