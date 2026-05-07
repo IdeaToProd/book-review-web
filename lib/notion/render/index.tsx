@@ -198,6 +198,15 @@ function renderBlock(block: NotionBlock, index: number): React.ReactNode {
       )
     }
 
+    case "divider":
+      return (
+        <hr
+          key={block.id}
+          className="my-6 border-t border-border"
+          aria-hidden
+        />
+      )
+
     case "quote": {
       const rt = block.quote?.rich_text ?? []
       return (

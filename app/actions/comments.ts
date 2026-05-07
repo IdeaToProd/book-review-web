@@ -90,8 +90,8 @@ export async function softDeleteComment(
       return { success: false, error: "본인이 작성한 댓글만 삭제할 수 있습니다." };
     }
 
-    // reviewId 추출 (캐시 무효화에 사용)
-    const reviewId: string = props.Review?.relation?.[0]?.id ?? "";
+    // reviewId 추출 (캐시 무효화에 사용) — 실제 Notion 속성명은 "Book Reviews"
+    const reviewId: string = props["Book Reviews"]?.relation?.[0]?.id ?? "";
 
     // 소프트 삭제 실행
     await notionSoftDeleteComment(commentId);

@@ -56,12 +56,16 @@ export function ReviewBody({ review, className }: ReviewBodyProps) {
     blocks,
   } = review
 
-  // 게시 날짜 포맷
-  const formattedDate = new Date(publishedAt).toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
+  // 게시 날짜 포맷 — publishedAt이 없으면 "날짜 미정"
+  const dateObj = publishedAt ? new Date(publishedAt) : null
+  const formattedDate =
+    dateObj && !isNaN(dateObj.getTime())
+      ? dateObj.toLocaleDateString("ko-KR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : "날짜 미정"
 
   return (
     <article className={cn(className)}>

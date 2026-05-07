@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getReviewBySlug, getRelatedReviews } from "@/lib/notion/reviews";
+import { getReviewBySlug, getRelatedReviews, getAllPublishedSlugs } from "@/lib/notion/reviews";
 import { getSession } from "@/lib/auth/session";
 import { getCommentsByReviewId } from "@/lib/notion/comments";
 import { ReviewBody } from "@/components/review/ReviewBody";
@@ -9,6 +9,15 @@ import { RelatedReviews } from "@/components/review/RelatedReviews";
 import { CommentList } from "@/components/comment/CommentList";
 import { CommentForm } from "@/components/comment/CommentForm";
 import { Separator } from "@/components/ui/separator";
+
+/** 빌드 미생성 slug는 on-demand ISR로 처리 (신규 리뷰 즉시 접근 가능) */
+export const dynamicParams = true;
+
+/** 빌드 시 Published 리뷰 전체를 정적 생성 — 신규 리뷰는 ISR 60초로 처리 */
+export async function generateStaticParams() {
+  const slugs = await getAllPublishedSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>;

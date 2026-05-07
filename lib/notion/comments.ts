@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { isFullPage } from "@notionhq/client";
 import type { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints/common";
 
@@ -47,9 +48,7 @@ function pageToComment(page: PageObjectResponse): Comment {
  * @param reviewId 조회할 리뷰의 Notion 페이지 ID
  * @returns Comment[] — 작성 시각 오름차순 정렬
  */
-export async function getCommentsByReviewId(
-  reviewId: string
-): Promise<Comment[]> {
+async function fetchCommentsByReviewId(reviewId: string): Promise<Comment[]> {
   try {
     const response = await notion.dataSources.query({
       data_source_id: process.env.NOTION_COMMENTS_DB_ID!,
@@ -72,6 +71,18 @@ export async function getCommentsByReviewId(
     console.error(`[Notion] getCommentsByReviewId("${reviewId}") 실패:`, error);
     return [];
   }
+}
+
+/**
+ * 댓글 목록 조회 — unstable_cache로 60초 캐시
+ * updateTag(`comments:${reviewId}`)로 댓글 작성·삭제 시 즉시 무효화
+ */
+export function getCommentsByReviewId(reviewId: string): Promise<Comment[]> {
+  return unstable_cache(
+    () => fetchCommentsByReviewId(reviewId),
+    ["comments-by-review-id", reviewId],
+    { tags: [`comments:${reviewId}`], revalidate: 60 }
+  )();
 }
 
 /**
