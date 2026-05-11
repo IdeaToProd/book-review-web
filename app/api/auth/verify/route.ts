@@ -28,8 +28,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=invalid", request.url));
   }
 
+  // 관리자 이메일 목록 파싱 (쉼표 구분, 환경변수 미설정 시 빈 배열)
+  const adminEmails = (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean);
+
+  const role = adminEmails.includes(email) ? "admin" : "member";
+
   // 세션 쿠키 설정 (14일 httpOnly)
-  await setSession(email);
+  await setSession(email, role);
 
   // 홈으로 리다이렉트
   return NextResponse.redirect(new URL("/", request.url));

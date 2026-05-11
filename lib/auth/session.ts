@@ -7,6 +7,7 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 /** 세션 데이터 인터페이스 */
 export interface Session {
   email: string;
+  role: "member" | "admin";
 }
 
 /**
@@ -22,7 +23,11 @@ export async function getSession(): Promise<Session | null> {
     const { payload } = await jwtVerify(token, JWT_SECRET);
     if (typeof payload.email !== "string") return null;
 
-    return { email: payload.email };
+    // role 필드가 없는 기존 JWT는 'member'로 처리 (하위 호환성)
+    const role: "member" | "admin" =
+      payload.role === "admin" ? "admin" : "member";
+
+    return { email: payload.email, role };
   } catch {
     // 만료 또는 서명 불일치 시 null 반환
     return null;
@@ -32,9 +37,13 @@ export async function getSession(): Promise<Session | null> {
 /**
  * 세션 JWT를 발급하고 httpOnly 쿠키에 저장 (14일 만료)
  * @param email 세션에 저장할 이메일
+ * @param role 사용자 권한
  */
-export async function setSession(email: string): Promise<void> {
-  const token = await new SignJWT({ email })
+export async function setSession(
+  email: string,
+  role: "member" | "admin"
+): Promise<void> {
+  const token = await new SignJWT({ email, role })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("14d")
     .setIssuedAt()
@@ -49,6 +58,26 @@ export async function setSession(email: string): Promise<void> {
     path: "/",
     maxAge: 14 * 24 * 60 * 60, // 14일 (초 단위)
   });
+}
+
+/**
+ * 로그인된 멤버 여부 확인 (모든 로그인 사용자 허용)
+ * @returns 미인증 시 { error: 'unauthorized' }, 인증 시 null
+ */
+export async function requireMember(): Promise<{ error: string } | null> {
+  const session = await getSession();
+  if (!session) return { error: "unauthorized" };
+  return null;
+}
+
+/**
+ * 관리자 권한 확인
+ * @returns 비관리자 시 { error: 'unauthorized' }, 관리자 시 null
+ */
+export async function requireAdmin(): Promise<{ error: string } | null> {
+  const session = await getSession();
+  if (!session || session.role !== "admin") return { error: "unauthorized" };
+  return null;
 }
 
 /**
